@@ -7,6 +7,7 @@ import json
 import shutil
 import sqlite3
 import statistics
+import unicodedata
 from pathlib import Path
 
 from server import seed
@@ -58,10 +59,16 @@ def tasks(db):
     ]
 
 
+def _norm(s: str) -> str:
+    """Lowercase, NFKC-normalize (folds narrow/non-breaking spaces), drop thousands separators, collapse spaces."""
+    s = unicodedata.normalize("NFKC", s).lower().replace(",", "")
+    return " ".join(s.split())
+
+
 def any_form(expect, answer):
-    """Each expected item may be a plain string; compare ignoring thousands separators."""
-    a = answer.lower().replace(",", "")
-    return all(e.lower().replace(",", "") in a for e in expect)
+    """True if every expected item appears in the answer after normalization."""
+    a = _norm(answer)
+    return all(_norm(e) in a for e in expect)
 
 
 async def main():

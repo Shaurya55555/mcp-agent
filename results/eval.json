@@ -1,0 +1,144 @@
+{
+  "summary": {
+    "tasks": 12,
+    "success_rate": 0.917,
+    "avg_tool_calls": 1.83,
+    "tool_error_rate": 0.0,
+    "p50_seconds": 357.26,
+    "avg_tokens": 1478
+  },
+  "runs": [
+    {
+      "answer": "There are **7** customers in Bengaluru.",
+      "trace": "272e07fa",
+      "llm_calls": 3,
+      "tool_calls": 2,
+      "tool_errors": 0,
+      "tokens": 1510,
+      "seconds": 11.23,
+      "task": "How many customers are in Bengaluru?",
+      "ok": true
+    },
+    {
+      "answer": "The total revenue from delivered orders is **392,572**.",
+      "trace": "963e72af",
+      "llm_calls": 3,
+      "tool_calls": 2,
+      "tool_errors": 0,
+      "tokens": 1604,
+      "seconds": 8.86,
+      "task": "What is the total revenue (qty x price) of delivered orders?",
+      "ok": true
+    },
+    {
+      "answer": "The product with the most units ordered is **Mechanical Keyboard**, with **35 units** ordered.",
+      "trace": "0ca7062d",
+      "llm_calls": 3,
+      "tool_calls": 2,
+      "tool_errors": 0,
+      "tokens": 1626,
+      "seconds": 132.93,
+      "task": "Which product has the most units ordered across all orders, and how many units?",
+      "ok": true
+    },
+    {
+      "answer": "Customer 7\u2019s email is **vikram7@example.com** and they have placed **4 non\u2011cancelled orders**.",
+      "trace": "f84a82c0",
+      "llm_calls": 4,
+      "tool_calls": 3,
+      "tool_errors": 0,
+      "tokens": 2492,
+      "seconds": 1093.96,
+      "task": "What is the email of customer 7, and how many non-cancelled orders have they placed?",
+      "ok": true
+    },
+    {
+      "answer": "There are **9** high\u2011priority tickets currently open.",
+      "trace": "cc3e8892",
+      "llm_calls": 3,
+      "tool_calls": 2,
+      "tool_errors": 0,
+      "tokens": 1581,
+      "seconds": 368.97,
+      "task": "How many high-priority tickets are currently open?",
+      "ok": true
+    },
+    {
+      "answer": "There are **16** orders with a status of \u201ccancelled.\u201d",
+      "trace": "891c3821",
+      "llm_calls": 3,
+      "tool_calls": 2,
+      "tool_errors": 0,
+      "tokens": 1523,
+      "seconds": 545.25,
+      "task": "How many orders were cancelled?",
+      "ok": true
+    },
+    {
+      "answer": "Bengaluru has the most customers, with **7** customers.",
+      "trace": "36958686",
+      "llm_calls": 3,
+      "tool_calls": 2,
+      "tool_errors": 0,
+      "tokens": 1557,
+      "seconds": 441.78,
+      "task": "Which city has the most customers, and how many?",
+      "ok": true
+    },
+    {
+      "answer": "The most expensive product is **Noise Cancelling Headset**, priced at **$8,999**.",
+      "trace": "4f3ba96a",
+      "llm_calls": 3,
+      "tool_calls": 2,
+      "tool_errors": 0,
+      "tokens": 1537,
+      "seconds": 551.84,
+      "task": "What is the most expensive product and its price?",
+      "ok": true
+    },
+    {
+      "answer": "Anaya\u202fKapoor has the most open tickets, with **5** open tickets.",
+      "trace": "bb6c51d1",
+      "llm_calls": 3,
+      "tool_calls": 2,
+      "tool_errors": 0,
+      "tokens": 1706,
+      "seconds": 781.0,
+      "task": "Which customer has the most open tickets? Give name and count.",
+      "ok": false
+    },
+    {
+      "answer": "Customer 7 is Vikram Nair, and they live in Hyderabad.",
+      "trace": "3897996b",
+      "llm_calls": 2,
+      "tool_calls": 1,
+      "tool_errors": 0,
+      "tokens": 858,
+      "seconds": 143.95,
+      "task": "Where does customer 7 live and what is their name?",
+      "ok": true
+    },
+    {
+      "answer": "The database contains these tables:\n\n- **customers**\n- **orders**\n- **products**\n- **tickets**",
+      "trace": "445e9e60",
+      "llm_calls": 2,
+      "tool_calls": 1,
+      "tool_errors": 0,
+      "tokens": 893,
+      "seconds": 295.9,
+      "task": "List the tables in the database.",
+      "ok": true
+    },
+    {
+      "answer": "The new ticket ID is **41**.",
+      "trace": "3f8a8097",
+      "llm_calls": 2,
+      "tool_calls": 1,
+      "tool_errors": 0,
+      "tokens": 853,
+      "seconds": 345.56,
+      "task": "Open a high-priority ticket for customer 3 with subject 'Refund not received'. Tell me the new ticket id.",
+      "ok": true
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "summary": {
+    "tasks": 12,
+    "passed_as_run": 11,
+    "passed_rescored": 12,
+    "avg_tool_calls": 1.83,
+    "tool_error_rate": 0.0,
+    "median_llm_call_ms": 106870,
+    "median_tool_call_ms": 30,
+    "note": "per-task wall time in eval.json is dominated by API rate-limit retries; use per-call latency"
+  },
+  "rows": [
+    {
+      "task": "How many customers are in Bengaluru?",
+      "ok_as_run": true,
+      "ok_rescored": true,
+      "tool_calls": 2
+    },
+    {
+      "task": "What is the total revenue (qty x price) of delivered orders?",
+      "ok_as_run": true,
+      "ok_rescored": true,
+      "tool_calls": 2
+    },
+    {
+      "task": "Which product has the most units ordered across all orders, and how many units?",
+      "ok_as_run": true,
+      "ok_rescored": true,
+      "tool_calls": 2
+    },
+    {
+      "task": "What is the email of customer 7, and how many non-cancelled orders have they placed?",
+      "ok_as_run": true,
+      "ok_rescored": true,
+      "tool_calls": 3
+    },
+    {
+      "task": "How many high-priority tickets are currently open?",
+      "ok_as_run": true,
+      "ok_rescored": true,
+      "tool_calls": 2
+    },
+    {
+      "task": "How many orders were cancelled?",
+      "ok_as_run": true,
+      "ok_rescored": true,
+      "tool_calls": 2
+    },
+    {
+      "task": "Which city has the most customers, and how many?",
+      "ok_as_run": true,
+      "ok_rescored": true,
+      "tool_calls": 2
+    },
+    {
+      "task": "What is the most expensive product and its price?",
+      "ok_as_run": true,
+      "ok_rescored": true,
+      "tool_calls": 2
+    },
+    {
+      "task": "Which customer has the most open tickets? Give name and count.",
+      "ok_as_run": false,
+      "ok_rescored": true,
+      "tool_calls": 2
+    },
+    {
+      "task": "Where does customer 7 live and what is their name?",
+      "ok_as_run": true,
+      "ok_rescored": true,
+      "tool_calls": 1
+    },
+    {
+      "task": "List the tables in the database.",
+      "ok_as_run": true,
+      "ok_rescored": true,
+      "tool_calls": 1
+    },
+    {
+      "task": "Open a high-priority ticket for customer 3 with subject 'Refund not received'. Tell me the new ticket id.",
+      "ok_as_run": true,
+      "ok_rescored": true,
+      "tool_calls": 1
+    }
+  ]
+}

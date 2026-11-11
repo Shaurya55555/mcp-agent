@@ -38,14 +38,25 @@ The agent's system prompt only allows `create_ticket` when the user explicitly a
 Expected answers are computed from the database with SQL, so ground truth is correct by construction.
 The write task is checked by inspecting the database afterwards, not by trusting the agent's words.
 
-Results (model: `openai/gpt-oss-120b` on Groq): **pending, run in progress.**
+Results (model: `openai/gpt-oss-120b` on Groq, one run, 12 tasks):
 
 | metric | value |
 |---|---|
-| task success rate | TBD |
-| average tool calls per task | TBD |
-| tool error rate | TBD |
-| p50 seconds per task | TBD |
+| tasks passed as run | **11 / 12** (91.7%) |
+| tasks passed after fixing the answer matcher | **12 / 12** (see below) |
+| average tool calls per task | 1.83 (schema, then one query; the write task used 1) |
+| tool error rate | 0 of 22 tool calls |
+| median tool-call latency (server side) | 30 ms |
+
+The single miss was task 9 ("which customer has the most open tickets"). The agent's answer was correct
+("Anaya Kapoor ... 5 open tickets") but it used a Unicode narrow no-break space between the two names, and my
+original check looked for a plain space. I fixed the matcher (NFKC normalization, covered by tests) and re-scored
+the saved answers without calling the model again (`python -m agent.rescore`, output in `results/eval_rescored.json`).
+Both numbers are reported on purpose: 11/12 is what the original check said, 12/12 is after the check was corrected.
+No agent answer was changed. The write task is verified by inspecting the database, and was kept as stored.
+
+No end-to-end latency is reported: the free API tier rate-limits (8,000 tokens per minute), so per-task wall time in
+`results/eval.json` is dominated by retry waits. A clean LLM call takes about 1 to 3 seconds (see `docs/sample_trace.jsonl`).
 
 ## Run
     pip install -r requirements.txt
@@ -55,5 +66,7 @@ Results (model: `openai/gpt-oss-120b` on Groq): **pending, run in progress.**
     pytest
 
 ## Limits
-Single agent, not a multi-agent system. SQLite demo data, one model, 12 tasks. Success is a substring check on
-the final answer plus a database check for the write task, so it can miss correct answers phrased unusually.
+Single agent, not a multi-agent system. SQLite demo data, one model, one run of 12 tasks (a pass rate on 12 tasks
+is a smoke test, not a benchmark). Success is a normalized substring check on the final answer plus a database check
+for the write task, so it can still miss correct answers phrased unusually. The tasks are simple (one or two
+queries); multi-hop reasoning over the data is not tested.
