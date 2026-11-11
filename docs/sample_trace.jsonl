@@ -1,0 +1,8 @@
+{"trace": "56a05e9d", "t": 0.0, "kind": "run", "name": "task", "input": "How many customers are in Bengaluru?"}
+{"trace": "56a05e9d", "t": 4.407, "kind": "run", "name": "tools_available", "input": ["get_schema", "run_sql", "get_customer", "create_ticket"]}
+{"trace": "56a05e9d", "t": 7.357, "kind": "llm", "step": 0, "ms": 2946, "model": "openai/gpt-oss-120b", "tokens": 378, "tool_calls": ["get_schema"]}
+{"trace": "56a05e9d", "t": 8.177, "kind": "tool", "name": "get_schema", "args": {}, "ms": 819, "error": null, "output": "{\n  \"customers\": [\n    \"id INTEGER\",\n    \"name TEXT\",\n    \"email TEXT\",\n    \"city TEXT\",\n    \"joined TEXT\"\n  ],\n  \"orders\": [\n    \"id INTEGER\",\n    \"customer_id INTEGER\",\n    \"product_id INTEGER\",\n    \"qty INTEGER\",\n    \"status TEXT\",\n    \"ordered_on TEXT\"\n  ],\n  \"products\": [\n    \"id INTEGER\",\n    \"name TEXT\",\n    \"price INTEGER\"\n  ],\n  \"tickets\": [\n    \"id INTEGER\",\n    \"customer_id INTEGER\",\n    \"subject TEXT\",\n    \"priority TEXT\",\n    \"status TEXT\",\n    \"created_on TEXT\"\n  ]\n}"}
+{"trace": "56a05e9d", "t": 9.456, "kind": "llm", "step": 1, "ms": 1278, "model": "openai/gpt-oss-120b", "tokens": 556, "tool_calls": ["run_sql"]}
+{"trace": "56a05e9d", "t": 9.464, "kind": "tool", "name": "run_sql", "args": {"query": "SELECT COUNT(*) AS count FROM customers WHERE city = 'Bengaluru';"}, "ms": 7, "error": null, "output": "{\n  \"rows\": [\n    {\n      \"count\": 7\n    }\n  ],\n  \"truncated\": false\n}"}
+{"trace": "56a05e9d", "t": 26.223, "kind": "llm", "step": 2, "ms": 16758, "model": "openai/gpt-oss-120b", "tokens": 576, "tool_calls": []}
+{"trace": "56a05e9d", "t": 26.223, "kind": "run", "name": "answer", "output": "There are **7** customers in Bengaluru."}

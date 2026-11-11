@@ -5,3 +5,4 @@ __pycache__/
 data/*.db
 logs/*.jsonl
 traces/*.jsonl
+!docs/sample_trace.jsonl
