@@ -58,12 +58,26 @@ No agent answer was changed. The write task is verified by inspecting the databa
 No end-to-end latency is reported: the free API tier rate-limits (8,000 tokens per minute), so per-task wall time in
 `results/eval.json` is dominated by retry waits. A clean LLM call takes about 1 to 3 seconds (see `docs/sample_trace.jsonl`).
 
+## Failure handling
+| situation | behavior |
+|---|---|
+| LLM returns 429, 500, 502 or 503 | up to 6 attempts; waits `retry-after` if sent, else exponential backoff |
+| network error or timeout (120 s per call) | exponential backoff, re-raised after the 6th attempt (the run fails; it is not silently skipped) |
+| model sends malformed JSON as tool arguments | recorded as a tool error in the trace and returned to the model as text; the loop continues |
+| model calls a tool that does not exist | same: error text goes back to the model, run continues |
+| `run_sql` given anything but one SELECT | rejected by the server (`only a single SELECT statement is allowed`); the connection is also opened read-only |
+| `create_ticket` with bad priority or unknown customer | `ValueError` or `LookupError` returned as a tool error |
+| model never stops calling tools | stops after `MAX_STEPS` (default 8) with the answer `(stopped: step limit reached)` |
+| tool output larger than 6,000 characters | truncated before it is sent back to the model (the server also caps rows at 50) |
+
+Not handled: a provider outage longer than the retry window fails the whole task, and there is no per-tool timeout.
+
 ## Run
     pip install -r requirements.txt
     set LLM_API_KEY=...        # any OpenAI-compatible endpoint (see agent/agent.py)
     python -m agent.agent "Which customer has the most open tickets?"
     python -m agent.eval_tasks
-    pytest
+    pytest                     # 15 tests, offline (scripted LLM, real MCP server over stdio)
 
 ## Limits
 Single agent, not a multi-agent system. SQLite demo data, one model, one run of 12 tasks (a pass rate on 12 tasks
