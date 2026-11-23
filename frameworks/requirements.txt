@@ -1,0 +1,7 @@
+mcp==1.30.0
+httpx
+langgraph
+langchain-openai
+langchain-mcp-adapters
+google-adk
+litellm

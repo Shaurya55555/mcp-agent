@@ -78,6 +78,8 @@ Same 12 tasks, same model, `python -m agent.eval_tasks --mode single|multi|multi
 (active = time in provider calls and tools, without free-tier rate-limit waits). The critic never rejected a draft in 24 runs. These
 tasks need one or two queries, so this says nothing about multi-hop tasks, which were not tested.
 
+See `frameworks/README.md` for the same flow rebuilt in LangGraph and Google ADK, with lines of code and a behavior comparison.
+
 ## Memory
 `agent/memory.py`. Short-term: a `Session` replays its own earlier turns. Long-term: one summary per finished task, stored in
 **PostgreSQL** (`MEMORY_DSN=postgresql://...`, full-text search ranked with `ts_rank_cd`) or SQLite (default `data/memory.db`).
