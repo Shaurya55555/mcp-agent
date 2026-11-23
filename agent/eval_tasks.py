@@ -1,7 +1,11 @@
 """12 tasks whose ground truth is computed from the DB, so expected answers are correct by construction.
 
-python -m agent.eval_tasks   # prints success rate, avg tool calls, p50 latency
+python -m agent.eval_tasks                        # single agent          -> results/eval_single.json
+python -m agent.eval_tasks --mode multi           # planner+worker+critic -> results/eval_multi.json
+python -m agent.eval_tasks --mode multi-nocritic  # planner+worker        -> results/eval_multi-nocritic.json
+python -m agent.compare                           # side-by-side table    -> results/compare.md
 """
+import argparse
 import asyncio
 import json
 import shutil
@@ -12,6 +16,7 @@ from pathlib import Path
 
 from server import seed
 from .agent import run_task
+from .multi import run_task_multi
 
 ROOT = Path(__file__).resolve().parents[1]
 EVAL_DB = ROOT / "data" / "eval.db"
@@ -71,13 +76,19 @@ def any_form(expect, answer):
     return all(_norm(e) in a for e in expect)
 
 
-async def main():
+async def run_mode(mode: str, task: str, db: str) -> dict:
+    if mode == "single":
+        return await run_task(task, db)
+    return await run_task_multi(task, db, use_critic=(mode == "multi"))
+
+
+async def main(mode: str = "single", out: str | None = None):
     seed.build(EVAL_DB)
     work = ROOT / "data" / "eval_work.db"
     shutil.copy(EVAL_DB, work)
     results = []
     for i, (task, expect, extra) in enumerate(tasks(EVAL_DB), 1):
-        res = await run_task(task, str(work))
+        res = await run_mode(mode, task, str(work))
         ok = any_form(expect, res["answer"])
         if extra and extra[0] == "write":
             rows = q(work, "SELECT customer_id, priority, subject FROM tickets WHERE id > ?", extra[1])
@@ -95,11 +106,22 @@ async def main():
         "tool_error_rate": round(sum(r["tool_errors"] for r in results) / max(1, sum(r["tool_calls"] for r in results)), 3),
         "p50_seconds": round(statistics.median(r["seconds"] for r in results), 2),
         "avg_tokens": round(statistics.mean(r["tokens"] for r in results)),
+        "mode": mode,
+        "avg_llm_calls": round(statistics.mean(r["llm_calls"] for r in results), 2),
+        "avg_agent_turns": round(statistics.mean(r["agent_turns"] for r in results), 2),
+        # time inside provider calls and tools only; wall time (p50_seconds) also contains free-tier rate-limit waits
+        "p50_active_seconds": round(statistics.median(r["active_seconds"] for r in results), 2),
+        "mean_active_seconds": round(statistics.mean(r["active_seconds"] for r in results), 2),
     }
     print(json.dumps(summary, indent=2))
     (ROOT / "results").mkdir(exist_ok=True)
-    (ROOT / "results" / "eval.json").write_text(json.dumps({"summary": summary, "runs": results}, indent=2))
+    dest = Path(out) if out else ROOT / "results" / f"eval_{mode}.json"
+    dest.write_text(json.dumps({"summary": summary, "runs": results}, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--mode", choices=["single", "multi", "multi-nocritic"], default="single")
+    ap.add_argument("--out", default=None, help="result file (default results/eval_<mode>.json)")
+    a = ap.parse_args()
+    asyncio.run(main(a.mode, a.out))

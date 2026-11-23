@@ -1,0 +1,243 @@
+{
+  "summary": {
+    "tasks": 12,
+    "success_rate": 1.0,
+    "avg_tool_calls": 1.83,
+    "tool_error_rate": 0.0,
+    "p50_seconds": 13.75,
+    "avg_tokens": 1980,
+    "mode": "multi-nocritic",
+    "avg_llm_calls": 3.83,
+    "avg_agent_turns": 2,
+    "p50_active_seconds": 6.66,
+    "mean_active_seconds": 6.96
+  },
+  "runs": [
+    {
+      "answer": "There are **7** customers in Bengaluru.",
+      "plan": [
+        "get_schema",
+        "run_sql"
+      ],
+      "revisions": 0,
+      "notes": [],
+      "trace": "ac0c98b9",
+      "llm_calls": 4,
+      "tool_calls": 2,
+      "tool_errors": 0,
+      "tokens": 1930,
+      "agent_turns": 2,
+      "seconds": 10.49,
+      "active_seconds": 6.46,
+      "task": "How many customers are in Bengaluru?",
+      "ok": true
+    },
+    {
+      "answer": "The total revenue from delivered orders is **392,572**.",
+      "plan": [
+        "get_schema",
+        "run_sql"
+      ],
+      "revisions": 0,
+      "notes": [],
+      "trace": "6a7905a6",
+      "llm_calls": 4,
+      "tool_calls": 2,
+      "tool_errors": 0,
+      "tokens": 2022,
+      "agent_turns": 2,
+      "seconds": 12.99,
+      "active_seconds": 7.85,
+      "task": "What is the total revenue (qty x price) of delivered orders?",
+      "ok": true
+    },
+    {
+      "answer": "The product with the most units ordered is **Mechanical Keyboard**, with **35 units** ordered.",
+      "plan": [
+        "get_schema",
+        "run_sql"
+      ],
+      "revisions": 0,
+      "notes": [],
+      "trace": "d0dd94a4",
+      "llm_calls": 4,
+      "tool_calls": 2,
+      "tool_errors": 0,
+      "tokens": 2028,
+      "agent_turns": 2,
+      "seconds": 11.07,
+      "active_seconds": 6.81,
+      "task": "Which product has the most units ordered across all orders, and how many units?",
+      "ok": true
+    },
+    {
+      "answer": "Customer 7’s email is **vikram7@example.com**, and they have placed **4 non‑cancelled orders**.",
+      "plan": [
+        "get_customer(7)",
+        "run_sql(\"SELECT COUNT(*) FROM orders WHERE customer_id = 7 AND status != 'cancelled';\")"
+      ],
+      "revisions": 0,
+      "notes": [],
+      "trace": "bd40d1f8",
+      "llm_calls": 4,
+      "tool_calls": 2,
+      "tool_errors": 0,
+      "tokens": 2075,
+      "agent_turns": 2,
+      "seconds": 14.5,
+      "active_seconds": 8.1,
+      "task": "What is the email of customer 7, and how many non-cancelled orders have they placed?",
+      "ok": true
+    },
+    {
+      "answer": "There are **9** high‑priority tickets that are currently open.",
+      "plan": [
+        "Use get_schema to retrieve the database schema and identify the tickets table and relevant columns.",
+        "Run a SQL query with run_sql to count tickets where priority is high and status is open, e.g., SELECT COUNT(*) FROM tickets WHERE priority = 'high' AND status = 'open';"
+      ],
+      "revisions": 0,
+      "notes": [],
+      "trace": "ba033838",
+      "llm_calls": 4,
+      "tool_calls": 2,
+      "tool_errors": 0,
+      "tokens": 2161,
+      "agent_turns": 2,
+      "seconds": 14.64,
+      "active_seconds": 5.95,
+      "task": "How many high-priority tickets are currently open?",
+      "ok": true
+    },
+    {
+      "answer": "There are **16** cancelled orders.",
+      "plan": [
+        "Use get_schema to identify the orders table and its columns.",
+        "Run a SQL query with run_sql to count the number of orders where the status indicates cancellation."
+      ],
+      "revisions": 0,
+      "notes": [],
+      "trace": "d22d806a",
+      "llm_calls": 4,
+      "tool_calls": 2,
+      "tool_errors": 0,
+      "tokens": 2088,
+      "agent_turns": 2,
+      "seconds": 15.72,
+      "active_seconds": 5.94,
+      "task": "How many orders were cancelled?",
+      "ok": true
+    },
+    {
+      "answer": "The city with the most customers is **Bengaluru**, with **7 customers**.",
+      "plan": [
+        "Use get_schema to view the database schema and identify the customers table and its city field.",
+        "Run an SQL query (e.g., SELECT city, COUNT(*) AS customer_count FROM customers GROUP BY city ORDER BY customer_count DESC LIMIT 1) using run_sql to find the city with the most customers and the count."
+      ],
+      "revisions": 0,
+      "notes": [],
+      "trace": "c456d6b8",
+      "llm_calls": 4,
+      "tool_calls": 2,
+      "tool_errors": 0,
+      "tokens": 2335,
+      "agent_turns": 2,
+      "seconds": 18.44,
+      "active_seconds": 7.29,
+      "task": "Which city has the most customers, and how many?",
+      "ok": true
+    },
+    {
+      "answer": "The most expensive product is **Noise Cancelling Headset**, priced at **$8,999**.",
+      "plan": [
+        "get_schema",
+        "run_sql"
+      ],
+      "revisions": 0,
+      "notes": [],
+      "trace": "1f9975b2",
+      "llm_calls": 4,
+      "tool_calls": 2,
+      "tool_errors": 0,
+      "tokens": 1992,
+      "agent_turns": 2,
+      "seconds": 11.35,
+      "active_seconds": 7.21,
+      "task": "What is the most expensive product and its price?",
+      "ok": true
+    },
+    {
+      "answer": "The customer with the most open tickets is **Anaya Kapoor**, who has **5 open tickets**.",
+      "plan": [
+        "run_sql: SELECT customer_id, COUNT(*) AS open_count FROM tickets WHERE status = 'open' GROUP BY customer_id ORDER BY open_count DESC LIMIT 1;",
+        "get_customer: Retrieve the name of the customer using the customer_id obtained from the previous query."
+      ],
+      "revisions": 0,
+      "notes": [],
+      "trace": "603bd4e8",
+      "llm_calls": 5,
+      "tool_calls": 3,
+      "tool_errors": 0,
+      "tokens": 3083,
+      "agent_turns": 2,
+      "seconds": 22.58,
+      "active_seconds": 10.95,
+      "task": "Which customer has the most open tickets? Give name and count.",
+      "ok": true
+    },
+    {
+      "answer": "Customer 7 is **Vikram Nair**, and they live in **Hyderabad**.",
+      "plan": [
+        "Call get_customer with customer_id=7 to retrieve the customer's name and address."
+      ],
+      "revisions": 0,
+      "notes": [],
+      "trace": "9ad8f87a",
+      "llm_calls": 3,
+      "tool_calls": 1,
+      "tool_errors": 0,
+      "tokens": 1329,
+      "agent_turns": 2,
+      "seconds": 10.35,
+      "active_seconds": 5.22,
+      "task": "Where does customer 7 live and what is their name?",
+      "ok": true
+    },
+    {
+      "answer": "The database contains the following tables:\n\n- **customers**\n- **orders**\n- **products**\n- **tickets**",
+      "plan": [
+        "Use get_schema to retrieve and list all tables in the database."
+      ],
+      "revisions": 0,
+      "notes": [],
+      "trace": "506e8387",
+      "llm_calls": 3,
+      "tool_calls": 1,
+      "tool_errors": 0,
+      "tokens": 1237,
+      "agent_turns": 2,
+      "seconds": 14.74,
+      "active_seconds": 5.18,
+      "task": "List the tables in the database.",
+      "ok": true
+    },
+    {
+      "answer": "The new ticket ID is **41**.",
+      "plan": [
+        "create_ticket(customer_id=3, priority='high', subject='Refund not received')",
+        "return the new ticket id"
+      ],
+      "revisions": 0,
+      "notes": [],
+      "trace": "9e525c06",
+      "llm_calls": 3,
+      "tool_calls": 1,
+      "tool_errors": 0,
+      "tokens": 1481,
+      "agent_turns": 2,
+      "seconds": 8.87,
+      "active_seconds": 6.51,
+      "task": "Open a high-priority ticket for customer 3 with subject 'Refund not received'. Tell me the new ticket id.",
+      "ok": true
+    }
+  ]
+}

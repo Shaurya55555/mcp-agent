@@ -58,6 +58,34 @@ No agent answer was changed. The write task is verified by inspecting the databa
 No end-to-end latency is reported: the free API tier rate-limits (8,000 tokens per minute), so per-task wall time in
 `results/eval.json` is dominated by retry waits. A clean LLM call takes about 1 to 3 seconds (see `docs/sample_trace.jsonl`).
 
+## Multi-agent mode (planner, worker, critic)
+`python -m agent.multi "question"` (add `--no-critic` to drop the critic). A planner (no tools) writes 1 to 4 steps, a worker runs the
+same MCP tool loop as the single agent with the plan in its prompt, and an optional critic checks the draft against the tool
+observations and can send the worker back once. They share a `SharedState` (task, plan, observations, draft, verdicts, notes).
+A planner with unusable output falls back to a one-step plan; a critic with unusable output counts as approval, and both are recorded.
+Single-agent mode (`python -m agent.agent`) is unchanged. Every LLM and tool span in the trace carries an `agent` label and each agent
+turn ends with an `agent_turn` span (`python -m agent.view_trace`).
+
+Same 12 tasks, same model, `python -m agent.eval_tasks --mode single|multi|multi-nocritic`, table in `results/compare.md`:
+
+| mode | runs | passed | LLM calls / task | tokens / task | p50 active s / task |
+|---|---|---|---|---|---|
+| single agent | 2 | 12/12, 12/12 | 2.83 | 1468, 1467 | 5.04, 5.57 |
+| planner + worker | 1 | 12/12 | 3.83 | 1980 | 6.66 |
+| planner + worker + critic | 2 | 12/12, 12/12 | 4.83 | 2454, 2470 | 8.69, 8.90 |
+
+**Multi-agent was not better here.** All modes passed every task; multi-agent cost about 1.67x the tokens and 1.7x the active latency
+(active = time in provider calls and tools, without free-tier rate-limit waits). The critic never rejected a draft in 24 runs. These
+tasks need one or two queries, so this says nothing about multi-hop tasks, which were not tested.
+
+## Memory
+`agent/memory.py`. Short-term: a `Session` replays its own earlier turns. Long-term: one summary per finished task, stored in
+**PostgreSQL** (`MEMORY_DSN=postgresql://...`, full-text search ranked with `ts_rank_cd`) or SQLite (default `data/memory.db`).
+Recalled notes are added to the system prompt, labelled as possibly out of date. `python -m agent.agent --memory "question"` (each CLI run is a new session).
+Tests run on both backends with the same cases, including: a fact told in one session is recalled by a later session on a new
+connection, and appears in the model's prompt (single and multi-agent); a session does not get its own turns twice; step-limit stops are not stored.
+CI runs them against a real PostgreSQL 16 service container. Limits: recall is keyword based, not semantic; summaries are the question plus the answer, not LLM-written; database facts may go stale.
+
 ## Failure handling
 | situation | behavior |
 |---|---|
@@ -77,10 +105,10 @@ Not handled: a provider outage longer than the retry window fails the whole task
     set LLM_API_KEY=...        # any OpenAI-compatible endpoint (see agent/agent.py)
     python -m agent.agent "Which customer has the most open tickets?"
     python -m agent.eval_tasks
-    pytest                     # 15 tests, offline (scripted LLM, real MCP server over stdio)
+    pytest                     # offline (scripted LLM, real MCP server over stdio); Postgres cases need MEMORY_TEST_DSN
 
 ## Limits
-Single agent, not a multi-agent system. SQLite demo data, one model, one run of 12 tasks (a pass rate on 12 tasks
+SQLite demo data, one model, one run of 12 tasks (a pass rate on 12 tasks
 is a smoke test, not a benchmark). Success is a normalized substring check on the final answer plus a database check
 for the write task, so it can still miss correct answers phrased unusually. The tasks are simple (one or two
 queries); multi-hop reasoning over the data is not tested.
